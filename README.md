@@ -3,7 +3,13 @@
 Este proyecto desarrollado en **Java 21** con **Spring Boot 3.4+** permite la gestión de clientes y su vinculación a fondos de inversión. Implementa seguridad mediante JWT, persistencia con **JPA + Hibernate**, base de datos en memoria **H2**, y pruebas unitarias de controladores y servicios.
 
 ---
+### ☁️☁️AWS DESPLIEGUE!☁️☁️
+La aplicación esta ejecutándose en AWS.
 
+Visita la ruta:
+http://54.92.130.120:8080/swagger-ui/index.html#/fondo-controller/listarFondos
+
+☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️
 ### 📊 Reporte de Cobertura de Pruebas - JaCoCo
 
 El reporte de cobertura de pruebas unitarias generado por JaCoCo está disponible en la siguiente ruta local:
