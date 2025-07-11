@@ -1,196 +1,188 @@
-# Proyecto Spring Boot - Configuración y Uso
+# Sistema de Gestión de Fondos de Inversión
 
-## ⚙️ Configuración del JDK
-
-- Este proyecto utiliza **Java 21**.  
-- Asegúrate de configurar `jdk-21` en el **Java Build Path** de tu IDE.
-- Para ello, ve a `Build Path > Add Library > JRE System Library > Installed JREs` y selecciona el JDK 21.
+Este proyecto desarrollado en **Java 21** con **Spring Boot 3.4+** permite la gestión de clientes y su vinculación a fondos de inversión. Implementa seguridad mediante JWT, persistencia con **JPA + Hibernate**, base de datos en memoria **H2**, y pruebas unitarias de controladores y servicios.
 
 ---
 
-## 📦 Librería Lombok
+### 📊 Reporte de Cobertura de Pruebas - JaCoCo
 
-- Se utilizó **[Lombok](https://projectlombok.org/)** para reducir el código boilerplate en clases.
-- Debes integrar Lombok en tu IDE para evitar errores de compilación.
-  - En Eclipse: Instala el plugin de Lombok.
-  - En IntelliJ: Habilita la anotación de procesamiento y agrega el plugin desde settings.
+El reporte de cobertura de pruebas unitarias generado por JaCoCo está disponible en la siguiente ruta local:
+
+👉 [Ver Reporte de Cobertura JaCoCo](./target/site/jacoco/index.html)
+
+> ⚠️ Para visualizar este reporte, abre el archivo `index.html` en un navegador.
+
+## 🛠️ Tecnologías Usadas
+
+- Java 21
+- Spring Boot
+- Spring Security (JWT)
+- Spring Web
+- Spring Data JPA
+- Base de datos H2 (en memoria)
+- Lombok
+- Maven
+- JUnit 5 + Mockito (pruebas)
+- Swagger/OpenAPI para documentación
+- Jacoco para cobertura de pruebas
 
 ---
 
-## 🗄️ Base de Datos - Oracle
+## 🧩 Arquitectura
 
-- Se utiliza **Oracle** como base de datos.
--ajustar usuario y password en properties del proyecto.
-- El esquema debe ser creado previamente:
-
-- La propiedad en `application.properties` permite la creación/eliminación automática de tablas sin necesidad de scripts SQL manuales:
-
-```properties
-spring.jpa.hibernate.ddl-auto=create-drop
-```
-
-> ⚠️ **Nota:** Esto eliminará las tablas cada vez que la aplicación se reinicie. Úsalo solo para entornos de desarrollo.
-
----
-
-## 📚 Documentación con Swagger
-
-- Se habilitó Swagger para facilitar la documentación y prueba de los endpoints REST.
-- Accede a la interfaz Swagger desde:
+El proyecto se organiza en capas:
 
 ```
-http://localhost:8080/swagger-ui/index.html
+└── src
+    └── main
+        ├── controller
+        ├── dtos
+        ├── entities
+        ├── exceptions
+        ├── repositories
+        ├── security
+        ├── services
+        ├── services.impl
+
 ```
 
 ---
 
-## 🔐 Seguridad - Autenticación y Autorización
+## 🔐 Autenticación
 
-- Se implementó seguridad usando **Spring Security + JWT**.
-- El proyecto genera automáticamente algunos usuarios por defecto al iniciar, gracias a un `@Bean`.
+La seguridad está implementada con JWT. Para consumir los endpoints protegidos, primero debes autenticarte:
 
-### Usuarios por defecto
+### Login
 
-```json
+```
+POST /auth/login
+Content-Type: application/json
+
 {
   "username": "admin",
-  "password": "admin123"
+  "password": "admin"
 }
 ```
 
-```json
-{
-  "username": "aux",
-  "password": "aux123"
-}
+### Usuarios precargados
+
+| Usuario | Rol        | Contraseña |
+|---------|------------|------------|
+| admin   | ROLE_ADMIN | admin      |
+| cli     | ROLE_USER  | cli        |
+
+---
+
+## ✅ Autorización
+
+Solo los siguientes endpoints requieren autenticación como **ADMIN**:
+
+- `POST /api/transacciones/suscribirse`
+- `POST /api/transacciones/cancelar`
+- `POST /api/clientes`
+
+Para el resto de endpoints como `GET /api/clientes/{id}` o `GET /api/transacciones/cliente/{id}`, es suficiente autenticarse con un usuario de rol `USER`.
+
+---
+
+## 🔄 Relaciones de Entidades
+
+- `ClienteEntity` ↔ `TransaccionEntity`: **Uno a Muchos**
+- `FondoEntity` ↔ `TransaccionEntity`: **Uno a Muchos**
+- `TransaccionEntity`: tabla intermedia que representa la relación de suscripciones y cancelaciones entre clientes y fondos.
+
+---
+
+## 🧪 Pruebas Unitarias
+
+Se han implementado pruebas con **JUnit 5** y **Mockito** en:
+
+- Controladores (`ClienteController`, `TransaccionController`, etc.)
+- Implementaciones de servicios (`ClienteServiceImpl`, `TransaccionServiceImpl`)
+
+Para visualizar la cobertura de pruebas con **Jacoco**:
+
+```bash
+mvn clean verify
+```
+
+Luego abre el archivo:
+
+```
+target/site/jacoco/index.html
 ```
 
 ---
 
-## 🛠️ Logs
+## 🧪 Swagger UI
 
-- Se utilizó la anotación `@Slf4j` en las clases `ServiceImpl` para registrar actividad del sistema y facilitar el monitoreo.
+La documentación y pruebas de los endpoints están disponibles en:
 
-## OTROS
--El endpoint de Eliminar comerciantes solo se podra usar con el rol de ROL_ADMIN
-
-
-
-## 🐳 Docker - Imagen Oracle 21c-xe
-
-Usaremos la **Express Edition** que se encuentra en:  
-https://container-registry.oracle.com/
+📍 [http://localhost:8080/swagger-ui/index.html#/](http://localhost:8080/swagger-ui/index.html#/)
 
 ---
 
-## 📥 Descargar la imagen
+## ⚙️ Requisitos y configuración
+
+### Requisitos
+
+- Java 21
+- Maven 3.9+
+- IDE recomendado: STS, IntelliJ o VS Code,Eclipse
+
+### Lombok
+
+Este proyecto usa **Lombok**. Asegúrate de tener el plugin instalado en tu IDE para evitar errores de compilación.
+
+### Base de Datos H2
+
+Se usa base de datos **en memoria** para pruebas automáticas. Accesible vía navegador:
 
 ```
-docker pull container-registry.oracle.com/database/express:latest
-```
-
----
-
-## 🚀 Correr el contenedor y habilitar conexión
-
-Recuerda mapear el puerto al correr el contenedor. Ejecuta desde PowerShell o terminal:
-
-```
-docker run --name <container_name> -p 1521:1521 \
-  -e ORACLE_PWD=<sysadmin_password> \
-  -v [<host_mount_point>:]/opt/oracle/oradata \
-  container-registry.oracle.com/database/express:21.3.0-xe
-```
-
-### Ejemplo:
-
-```
-docker run --name OracleXE -p 1521:1521 \
-  -e ORACLE_PWD=1234 \
-  -v D:\dataSqlDeveloper:/opt/oracle/oradata \
-  container-registry.oracle.com/database/express:21.3.0-xe
+http://localhost:8080/h2-console
 ```
 
 ---
 
-## ✅ Uso de SQL*PLUS desde el contenedor
+## 📦 Cómo ejecutar
 
-### Creacion de nuevo usuario!
 
-### Verifica el nombre del contenedor:
 
-```
-docker ps
-```
+## 🧾 Consideraciones del Negocio
 
-### Ingresa al contenedor:
-
-```
-docker exec -it <container_name> bash
-```
-
-### Dentro del contenedor, ejecuta SQL*Plus:
-
-```
-sqlplus system/1234@//localhost/XEPDB1
-```
-
-- **Usuario:** system  
-- **Contraseña:** 1234 (o la que definiste en `-e ORACLE_PWD`)  
-- **Servicio:** XEPDB1 (usado por Oracle Express Edition)
-
-Deberías quedar en el prompt de SQL*Plus:
+- El saldo inicial de un cliente es **COP $500.000**.
+- Cada transacción tiene un ID único y registra:
+  - Cliente
+  - Fondo
+  - Tipo (APERTURA o CANCELACIÓN)
+  - Monto
+  - Fecha
+- Cada fondo tiene un **monto mínimo** de vinculación.
+- Al cancelar una suscripción, se **devuelve** el valor vinculado al saldo del cliente.
+- Si el cliente no tiene saldo suficiente para suscribirse, se devuelve el mensaje:
 
 ```
-SQL>
+No tiene saldo disponible para vincularse al fondo <Nombre del fondo>
 ```
 
 ---
 
-## ⚙️ Comandos SQL para crear usuario y otorgar permisos
+## 📚 Scripts útiles
 
-```
-ALTER SESSION SET CONTAINER=XEPDB1;
+### Ver cobertura de pruebas (Jacoco)
 
-CREATE USER desarrollador IDENTIFIED BY 1234;
-
-GRANT CONNECT, RESOURCE TO desarrollador;
-
-ALTER USER desarrollador DEFAULT TABLESPACE USERS;
-
-ALTER USER desarrollador QUOTA UNLIMITED ON USERS;
+```bash
+#!/bin/bash
+cd /ruta/del/proyecto
+mvn clean verify
+open target/site/jacoco/index.html
 ```
 
 ---
 
-## 📥 Conexión desde SQL Developer
+## 📬 Contacto
 
-### Parámetros para conexión:
-
-- **Usuario:** desarrollador  
-- **Contraseña:** 1234  
-- **Host:** localhost  
-- **Puerto:** 1521  
-- **Service Name:** XEPDB1
+Este proyecto fue desarrollado como parte de una prueba académica o técnica.  
+Para más información, contacta a `oscarpino711@gmail.com`.
 
 ---
-
-## ✅ Crear conexión en SQL Developer
-
-1. Abre **SQL Developer**
-2. Haz clic en el botón `+` (Nueva conexión) o en `Archivo > Nueva conexión`
-3. Completa los campos:
-
-```
-Nombre conexión: OracleDesarrollador (o el que quieras)
-Usuario: desarrollador
-Contraseña: 1234
-Guardar contraseña: (opcional)
-Tipo de conexión: Basic
-Host: localhost
-Puerto: 1521
-Service name: XEPDB1
-```
-
-
-
