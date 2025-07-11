@@ -8,7 +8,7 @@ Este proyecto desarrollado en **Java 21** con **Spring Boot 3.4+** permite la ge
 
 El reporte de cobertura de pruebas unitarias generado por JaCoCo está disponible en la siguiente ruta local:
 
-👉 [Ver Reporte de Cobertura JaCoCo](./target/site/jacoco/index.html)
+👉 dentro del proyecto en la carpeta -> ./target/site/jacoco/index.html
 
 > ⚠️ Para visualizar este reporte, abre el archivo `index.html` en un navegador.
 
