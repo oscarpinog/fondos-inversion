@@ -172,3 +172,19 @@ Este proyecto fue desarrollado como parte de una prueba académica o técnica.
 Para más información, contacta a `oscarpino711@gmail.com`.
 
 ---
+## 📬 Script respuesta test -Consulta Solicitada
+
+SELECT DISTINCT c.nombre
+FROM cliente c
+JOIN inscripcion i ON c.id = i.idCliente
+WHERE NOT EXISTS (
+    -- Buscamos si hay alguna sucursal que tenga el producto...
+    SELECT d.idSucursal 
+    FROM disponibilidad d 
+    WHERE d.idProducto = i.idProducto
+    EXCEPT
+    -- ...que NO esté en la lista de sucursales que el cliente visita
+    SELECT v.idSucursal 
+    FROM visitan v 
+    WHERE v.idCliente = c.id
+);
