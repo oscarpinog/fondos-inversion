@@ -1,13 +1,14 @@
+**MSc en Ingeniería de Software.**
+*Oscar Rodriguez*
 # Sistema de Gestión de Fondos de Inversión
-
-Este proyecto desarrollado en **Java 21** con **Spring Boot 3.4+** permite la gestión de clientes y su vinculación a fondos de inversión. Implementa seguridad mediante JWT, persistencia con **JPA + Hibernate**, base de datos en memoria **H2**, y pruebas unitarias de controladores y servicios.
+Este proyecto desarrollado en **Java 21** con **Spring Boot 3.4+** permite la gestión de clientes y su vinculación a fondos de inversión. Implementa seguridad mediante JWT, persistencia con **JPA + Hibernate** y pruebas unitarias de controladores y servicios.
 
 ---
 ### ☁️☁️AWS DESPLIEGUE!☁️☁️
 La aplicación esta ejecutándose en AWS.
 
 Visita la ruta:
-http://54.92.130.120:8080/swagger-ui/index.html#/fondo-controller/listarFondos
+http://btg-fondos-app-env.eba-97ik4vhc.us-east-2.elasticbeanstalk.com/swagger-ui/index.html
 
 ☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️☁️
 ### 📊 Reporte de Cobertura de Pruebas - JaCoCo
@@ -25,32 +26,11 @@ El reporte de cobertura de pruebas unitarias generado por JaCoCo está disponibl
 - Spring Security (JWT)
 - Spring Web
 - Spring Data JPA
-- Base de datos H2 (en memoria)
 - Lombok
 - Maven
 - JUnit 5 + Mockito (pruebas)
 - Swagger/OpenAPI para documentación
 - Jacoco para cobertura de pruebas
-
----
-
-## 🧩 Arquitectura
-
-El proyecto se organiza en capas:
-
-```
-└── src
-    └── main
-        ├── controller
-        ├── dtos
-        ├── entities
-        ├── exceptions
-        ├── repositories
-        ├── security
-        ├── services
-        ├── services.impl
-
-```
 
 ---
 
@@ -187,7 +167,7 @@ open target/site/jacoco/index.html
 ---
 
 ## 📬 Contacto
-
+MSc en Ingeniería de Software Oscar Rodriguez
 Este proyecto fue desarrollado como parte de una prueba académica o técnica.  
 Para más información, contacta a `oscarpino711@gmail.com`.
 
