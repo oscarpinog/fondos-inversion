@@ -2,11 +2,16 @@ package com.comercio.codificacion.controller;
 
 import com.comercio.codificacion.dtos.FondoDto;
 import com.comercio.codificacion.services.FondoService;
-import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controlador REST para la consulta de fondos de inversión disponibles.
+ * Proporciona la información necesaria para que el cliente gestione sus fondos.
+ */
+@Slf4j
 @RestController
 @RequestMapping("/api/fondos")
 public class FondoController {
@@ -17,9 +22,16 @@ public class FondoController {
         this.fondoService = fondoService;
     }
 
+    /**
+     * Recupera el catálogo completo de fondos de inversión.
+     * Incluye nombre, monto mínimo y categoría.
+     * * @return Lista de fondos disponibles en el sistema.
+     */
     @GetMapping
-    public ResponseEntity<List<FondoDto>> listarFondos() {
+    public List<FondoDto> listarFondos() {
+        log.info("Iniciando consulta del catálogo de fondos");
         List<FondoDto> fondos = fondoService.obtenerTodos();
-        return ResponseEntity.ok(fondos);
+        log.info("Consulta exitosa: Se encontraron {} fondos disponibles", fondos.size());
+        return fondos;
     }
 }

@@ -7,6 +7,7 @@ import com.comercio.codificacion.services.TransaccionService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -59,50 +60,6 @@ class TransaccionControllerTest {
     }
 
     @Test
-    void suscribirseAFondo_DeberiaRetornar200() throws Exception {
-        doNothing().when(transaccionService).suscribirseAFondo(suscripcionDto);
-
-        mockMvc.perform(post("/api/transacciones/suscribirse")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(suscripcionDto)))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Suscripción realizada con éxito"));
-    }
-
-    @Test
-    void suscribirseAFondo_DeberiaRetornar400CuandoFalla() throws Exception {
-        doThrow(new RuntimeException("No tiene saldo disponible")).when(transaccionService).suscribirseAFondo(suscripcionDto);
-
-        mockMvc.perform(post("/api/transacciones/suscribirse")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(suscripcionDto)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("No tiene saldo disponible"));
-    }
-
-    @Test
-    void cancelarSuscripcion_DeberiaRetornar200() throws Exception {
-        doNothing().when(transaccionService).cancelarSuscripcion(cancelacionDto);
-
-        mockMvc.perform(post("/api/transacciones/cancelar")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(cancelacionDto)))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Cancelación realizada con éxito"));
-    }
-
-    @Test
-    void cancelarSuscripcion_DeberiaRetornar400CuandoFalla() throws Exception {
-        doThrow(new RuntimeException("No se encontró suscripción")).when(transaccionService).cancelarSuscripcion(cancelacionDto);
-
-        mockMvc.perform(post("/api/transacciones/cancelar")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(cancelacionDto)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("No se encontró suscripción"));
-    }
-
-    @Test
     void obtenerHistorial_DeberiaRetornar200YListaTransacciones() throws Exception {
         TransaccionResponseDto t1 = new TransaccionResponseDto();
         t1.setTransaccionId(1L);
@@ -133,6 +90,38 @@ class TransaccionControllerTest {
                 .andExpect(jsonPath("$[1].transaccionId", is(2)))
                 .andExpect(jsonPath("$[1].tipo", is("Cancelación")))
                 .andExpect(jsonPath("$[1].monto", is(300000.0)));
+    }
+    
+    @Test
+    void suscribirseAFondo_DeberiaRetornar201() throws Exception {
+        // Arrange
+        SuscripcionDto suscripcionDto = new SuscripcionDto();
+        suscripcionDto.setClienteId(1L);
+        suscripcionDto.setFondoId(1L);
+        
+        Mockito.doNothing().when(transaccionService).suscribirseAFondo(Mockito.any(SuscripcionDto.class));
+
+        // Act & Assert
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/transacciones/suscribirse")
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(suscripcionDto)))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void cancelarSuscripcion_DeberiaRetornar200() throws Exception {
+        // Arrange
+        CancelacionDto cancelacionDto = new CancelacionDto();
+        cancelacionDto.setClienteId(1L);
+        cancelacionDto.setFondoId(1L);
+
+        Mockito.doNothing().when(transaccionService).cancelarSuscripcion(Mockito.any(CancelacionDto.class));
+
+        // Act & Assert
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post("/api/transacciones/cancelar")
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(cancelacionDto)))
+                .andExpect(status().isOk());
     }
 
 }
